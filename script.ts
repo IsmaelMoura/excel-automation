@@ -2,15 +2,15 @@ function main(workbook: ExcelScript.Workbook) {
   // Get the current worksheet.
   const selectedSheet = workbook.getActiveWorksheet();
   // Get the 'Gestor' column
-  let manager_column = selectedSheet.getRange('A2:A1000').getValues();
+  let manager_column = selectedSheet.getRange('AL2:AL1000').getValues();
   // Get table lenght
-  let tableLength = selectedSheet.getTable('Tabela1').getRowCount();
+  let tableLength = selectedSheet.getTable('Infos_candidatos').getRowCount();
   // Get 'Diretoria' column index
-  let diretoria_index = selectedSheet.getTable('Tabela1').getColumnByName('Diretoria').getIndex();
+  let diretoria_index = selectedSheet.getTable('Infos_candidatos').getColumnByName('Diretoria Sinch').getIndex();
   // Get 'Business Unit' column index
-  let business_unit_index = selectedSheet.getTable('Tabela1').getColumnByName('Business Unit').getIndex();
+  let business_unit_index = selectedSheet.getTable('Infos_candidatos').getColumnByName('Business Unit Sinch').getIndex();
   // Get 'Centro de Custo' column index
-  let centro_de_custo_index = selectedSheet.getTable('Tabela1').getColumnByName('Centro de Custo').getIndex();
+  let centro_de_custo_index = selectedSheet.getTable('Infos_candidatos').getColumnByName('ID Centro de Custo Sinch').getIndex();
   // Get all managers informations column
   // [linha][coluna - 'Gestores' = 0; Diretorias = '1'; 'Job Codes' = 2]
   let all_managers_infos = selectedSheet.getTable('managers_infos').getRange().getValues();
