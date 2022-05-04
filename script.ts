@@ -1,24 +1,29 @@
 function main(workbook: ExcelScript.Workbook) {
   // Get the current worksheet.
-  let selectedSheet = workbook.getActiveWorksheet();
+  const selectedSheet = workbook.getActiveWorksheet();
   // Get the 'Gestor' column
-  let manager_column = selectedSheet.getRange('A2:A1000').getValues()
+  let manager_column = selectedSheet.getRange('A2:A1000').getValues();
   // Get table lenght
-  let tableLength = selectedSheet.getTable('Tabela1').getRowCount()
+  let tableLength = selectedSheet.getTable('Tabela1').getRowCount();
   // Get 'Job Code' column index
-  let jobCodeIndex = selectedSheet.getTable('Tabela1').getColumnByName('Job Code').getIndex()
+  let jobCodeIndex = selectedSheet.getTable('Tabela1').getColumnByName('Job Code').getIndex();
   // Get 'Diretoria' column index
-  let diretoriaIndex = selectedSheet.getTable('Tabela1').getColumnByName('Diretoria').getIndex()
+  let diretoriaIndex = selectedSheet.getTable('Tabela1').getColumnByName('Diretoria').getIndex();
+  // Get all managers informations table
+  let all_managers_infos = selectedSheet.getTable('Tabela2').getRange().getValues();
 
-  let teste = workbook
+  // [linha][coluna - 'Gestores' = 0; Diretorias = '1'; 'Job Codes' = 2]
 
-
-  for (let i = 0; i < tableLength + 1; i++) {
-    switch (manager_column[i].toString()) {
-      case 'teste2' && 'teste1':
-        selectedSheet.getCell(i + 1, jobCodeIndex).setValue('1234')
-        selectedSheet.getCell(i + 1, diretoriaIndex).setValue('4567')
-        break;
+  // 
+  for (let i = 1; i < all_managers_infos.length; i++) {
+    for (let count = 1; count < tableLength; count++) {
+      if (manager_column[count].toString() == all_managers_infos[i][0]) {
+        selectedSheet.getCell(count, jobCodeIndex).setValue(all_managers_infos[i][2]);
+        selectedSheet.getCell(count, diretoriaIndex).setValue(all_managers_infos[i][1]);
+      } else if (manager_column[count].toString() == '') {
+        selectedSheet.getCell(count, jobCodeIndex).setValue('');
+        selectedSheet.getCell(count, diretoriaIndex).setValue('');
+      }
     }
   }
 }
