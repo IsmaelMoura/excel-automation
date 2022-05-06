@@ -12,7 +12,7 @@ function main(workbook: ExcelScript.Workbook) {
   // Get 'Centro de Custo' column index
   let centro_de_custo_index = selectedSheet.getTable('Infos_candidatos').getColumnByName('ID Centro de Custo Sinch').getIndex();
   // Get all managers informations column
-  // [linha][coluna - 'Gestores' = 0; Diretorias = '1'; 'Job Codes' = 2]
+  // [linha][coluna - 'Gestores' = 0; Diretorias = '1'; 'Business Units' = 2; 'Centros de Custo' = 3]
   let all_managers_infos = workbook.getWorksheet('Referências').getTable('managers_infos').getRange().getValues();
 
   // Run everything inside as long as the counter is less than 'all_managers_infos.length'
