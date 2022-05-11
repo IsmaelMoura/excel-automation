@@ -18,7 +18,6 @@ function main(workbook: ExcelScript.Workbook) {
   let all_managers_infos = workbook.getWorksheet('Referências').getTable('managers_infos').getRange().getValues();
 
   // Run everything inside as long as the counter is less than 'all_managers_infos.length'
-  // Run everything inside as long as the counter is less than 'all_managers_infos.length'
   for (let i = 1; i < all_managers_infos.length; i++) {
     for (let count = 0; count <= tableLength; count++) {
       // if name of the manager is the same as the other table executes what is inside {}
