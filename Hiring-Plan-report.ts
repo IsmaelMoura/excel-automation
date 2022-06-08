@@ -5,7 +5,7 @@ function main(workbook: ExcelScript.Workbook) {
 	const HIRING_PLAN_REPORT_SHEET = workbook.getWorksheet('hiring_plan_report_2022-01-01_2');
 
 	const createJobTable = () => {
-		if (workbook.getTable('Job_Informations_Table')) {
+		if (workbook.getTable('Hiring_plan_report')) {
 			throw new Error('A table already exists. Delete it, paste your informations, and run the script again')
 		} else if (!HIRING_PLAN_REPORT_SHEET.getUsedRange()) {
 			throw new Error('There is no data in the spreadsheet. Clean it completely, paste your information and run the script again')
@@ -13,7 +13,7 @@ function main(workbook: ExcelScript.Workbook) {
 
 		HIRING_PLAN_REPORT_SHEET.getAutoFilter().remove()
 		// Add a new table at extended range obtained by extending right, then down from range A1:Z1 on HIRING_PLAN_REPORT_SHEET
-		workbook.addTable(HIRING_PLAN_REPORT_SHEET.getRange('A1:Z1').getExtendedRange(ExcelScript.KeyboardDirection.down), true).setName('Job_Informations_Table')
+		workbook.addTable(HIRING_PLAN_REPORT_SHEET.getRange('A1:Z1').getExtendedRange(ExcelScript.KeyboardDirection.down), true).setName('Hiring_plan_report')
 
 		createHiringManagerInfosTable()
 	}
@@ -36,18 +36,18 @@ function main(workbook: ExcelScript.Workbook) {
 		for (let i = 0; i < HIRING_MANAGER_TABLE_HEADERS.length; i++) {
 			HIRING_PLAN_REPORT_SHEET.getCell(0, sheetRowLength + i + 1).setValue(HIRING_MANAGER_TABLE_HEADERS[i])
 		}
-		
-		let jobTableInformations: ExcelScript.Table = workbook.getTable('Hiring_Manager_Table')
 
-		setFormula(jobTableInformations)
+		let jobInformationsTable: ExcelScript.Table = workbook.getTable('Hiring_plan_report')
+
+		setFormula(jobInformationsTable)
 	}
 
 	const setFormula = (table: ExcelScript.Table) => {
 		let buColumn = table.getColumnByName('BU')
 		let directorColumn = table.getColumnByName('Director')
-		let openedDateColumn = table.getColumnByName('Opened date')
+		let openedDateColumn = table.getColumnByName('Closing Date')
 
-		// add formula into BU, Director and Opened Date column cells
+		// add formula into BU, Director and Closing Date column cells
 		buColumn.getRangeBetweenHeaderAndTotal().setFormulaLocal("=PROCV(K2;'To. For'!A:B;2;0)")
 		directorColumn.getRangeBetweenHeaderAndTotal().setFormulaLocal("=PROCV(K2;'To. For'!A:C;3;0)")
 		openedDateColumn.getRangeBetweenHeaderAndTotal().setFormulaLocal("=ESQUERDA(S2;7)")
@@ -56,20 +56,22 @@ function main(workbook: ExcelScript.Workbook) {
 	}
 
 
-
 	/**
 	 * Pivotable
 	 */
-	const PIVOT_TABLE_SHEET = workbook.getWorksheet('pivot');
-	const HIRING_PLAN_REPORT_TABLE = workbook.getTable("Job_Informations_Table");
 
 	const newPivotTable = () => {
-		let newPivotTable = workbook.getPivotTable('PivotTable_hiringPlan')
+		const PIVOT_TABLE_SHEET = workbook.getWorksheet("pivot")
+		const HIRING_PLAN_REPORT_TABLE = workbook.getTable("Hiring_plan_report")
 
-		workbook.addPivotTable('PivotTable_hiringPlan', HIRING_PLAN_REPORT_TABLE, PIVOT_TABLE_SHEET.getCell(3, 0))
+		workbook.addPivotTable("PivotTable HiringPlan", HIRING_PLAN_REPORT_TABLE, PIVOT_TABLE_SHEET.getCell(3, 0))
 	}
 
+	/**
+	 * Inicialize principal function
+	 */
 	createJobTable()
+
 
 	/**
 	 * Suport messaging
