@@ -1,5 +1,6 @@
-# Script de Automação
-Script de automação do Excel Online para preencher campos de uma tabela de acordo com o nome do gestor
+# Scripts de automação
+Repositório de scrips de automação para o Excel
 
-## Observação
-Script criado apenas para estudo de TypeScript e Script Online (Excel), pois a função PROCV tem a mesma função.
+## Tecnologias
+- Microsoft Excel Online
+- TypeScript
