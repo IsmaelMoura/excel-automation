@@ -1,95 +1,155 @@
 function main(workbook: ExcelScript.Workbook) {
-  const PIVOT_SHEET = workbook.getWorksheet("pivot");
-  const REASON_TABLE = PIVOT_SHEET.getTable("Reason_Table");
-  const DIRECTOR_TABLE = PIVOT_SHEET.getTable("Director_Table");
-  let today = new Date();
-  let monthName = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  /**
+   * Hiring Plan Report
+   */
+  const hiringPlanReportSheet = workbook.getWorksheet(
+    "hiring_plan_report_2022-01-01_2"
+  );
 
-  function createReasonChart() {
-    let chartTitle = `Filled per Reason - ${monthName[today.getMonth() - 1]}`;
-    if (PIVOT_SHEET.getChart(chartTitle)) {
-      PIVOT_SHEET.getChart(chartTitle).delete();
-    } else if (
-      REASON_TABLE.getRangeBetweenHeaderAndTotal().getUsedRange() === undefined
-    ) {
+  function createJobTable() {
+    if (hiringPlanReportSheet.getTable("hiring_plan_report")) {
+      let clearSheet: void = hiringPlanReportSheet
+        .getRanges()
+        .clear(ExcelScript.ClearApplyTo.all);
+
       throw new Error(
-        "There is no data filled per reason table. Paste your informations and run the script again"
+        "A table already exists. Paste your informations, and run the script again"
+      );
+    } else if (hiringPlanReportSheet.getCell(0, 0).getValue() !== "Code") {
+      let clearSheet: void = hiringPlanReportSheet
+        .getRanges()
+        .clear(ExcelScript.ClearApplyTo.all);
+
+      throw new Error(
+        "There is no data in the spreadsheet. Paste your informations and run the script again"
       );
     }
 
-    let reasonChart = PIVOT_SHEET.addChart(
-      ExcelScript.ChartType.columnClustered,
-      REASON_TABLE.getRangeBetweenHeaderAndTotal()
-    );
+    hiringPlanReportSheet.getAutoFilter().remove();
 
-    reasonChart.setName(chartTitle);
-    reasonChart.getTitle().setText(chartTitle);
-    reasonChart.getSeries()[0].setHasDataLabels(true);
-    reasonChart.getAxes().getValueAxis().getMajorGridlines().setVisible(false);
-    reasonChart.getAxes().getValueAxis().getMinorGridlines().setVisible(false);
-    reasonChart.getAxes().getValueAxis().setVisible(false);
-    reasonChart.getLegend().setVisible(false);
+    hiringPlanReportSheet
+      .addTable(
+        hiringPlanReportSheet
+          .getRange("A1:Z1")
+          .getExtendedRange(ExcelScript.KeyboardDirection.down),
+        true
+      )
+      .setName("hiring_plan_report");
 
-    // set chart position
-    reasonChart.setLeft(450);
-    reasonChart.setTop(70);
+    createHiringManagerInfosTable();
   }
 
-  function createDirectorChart() {
-    let chartTitle: string = `Filled per Director - ${
-      monthName[today.getMonth() - 1]
-    }`;
+  function createHiringManagerInfosTable() {
+    let hiringManagerTableHeaders = [
+      "BU",
+      "Director",
+      "Opened Date",
+      "Closing Date",
+      "gap to fill",
+      "Complexity",
+      "TECH or not",
+      "Region",
+    ];
 
-    if (PIVOT_SHEET.getChart(chartTitle)) {
-      PIVOT_SHEET.getChart(chartTitle).delete();
-    } else if (
-      DIRECTOR_TABLE.getRangeBetweenHeaderAndTotal().getUsedRange() ===
-      undefined
-    ) {
-      throw new Error(
-        "There is no data filled per director table. Paste your informations and run the script again"
-      );
+    let sheetRowLength = hiringPlanReportSheet
+      .getUsedRange()
+      .getLastColumn()
+      .getColumnIndex();
+
+    hiringManagerTableHeaders.map((text, index) => {
+      hiringPlanReportSheet
+        .getCell(0, sheetRowLength + index + 1)
+        .setValue(text);
+    });
+
+    let hiringPlanTable: ExcelScript.Table =
+      hiringPlanReportSheet.getTable("hiring_plan_report");
+
+    setFormula(hiringPlanTable);
+  }
+
+  function setFormula(hiringPlanTable: ExcelScript.Table) {
+    let buColumn = hiringPlanTable
+      .getColumnByName("BU")
+      .getRangeBetweenHeaderAndTotal();
+
+    let directorColumn = hiringPlanTable
+      .getColumnByName("Director")
+      .getRangeBetweenHeaderAndTotal();
+
+    let openedDateColumn = hiringPlanTable
+      .getColumnByName("Closing Date")
+      .getRangeBetweenHeaderAndTotal();
+
+    buColumn.setFormulaLocal("=VLOOKUP(K2;'To. For'!A:B;2;0)");
+    directorColumn.setFormulaLocal("=VLOOKUP(K2;'To. For'!A:C;3;0)");
+    openedDateColumn.setFormulaLocal("=LEFT(S2;7)");
+
+    createReasonTable(hiringPlanTable);
+  }
+
+  /**
+   * PivotTables
+   */
+  const pivotTablesSheet = workbook.getWorksheet("pivot");
+
+  function createReasonTable(hiringPlanTable: ExcelScript.Table) {
+    let reasonTableName = "Filled-Per-Reason";
+
+    if (pivotTablesSheet.getPivotTable(reasonTableName)) {
+      pivotTablesSheet.getPivotTable(reasonTableName).refresh();
+      return;
     }
 
-    let reasonChart = PIVOT_SHEET.addChart(
-      ExcelScript.ChartType.columnClustered,
-      DIRECTOR_TABLE.getRangeBetweenHeaderAndTotal()
+    const filledPerReasonTable = pivotTablesSheet.addPivotTable(
+      reasonTableName,
+      hiringPlanTable,
+      pivotTablesSheet.getCell(0, 0)
     );
 
-    reasonChart.setName(chartTitle);
-    reasonChart.getTitle().setText(chartTitle);
-    reasonChart.getSeries()[0].setHasDataLabels(true);
-    reasonChart.getAxes().getValueAxis().getMajorGridlines().setVisible(false);
-    reasonChart.getAxes().getValueAxis().getMinorGridlines().setVisible(false);
-    reasonChart.getAxes().getValueAxis().setVisible(false);
-    reasonChart.getLegend().setVisible(false);
+    filledPerReasonTable.addFilterHierarchy(
+      filledPerReasonTable.getHierarchy("Closing Date")
+    );
+    filledPerReasonTable.addRowHierarchy(
+      filledPerReasonTable.getHierarchy("Reason")
+    );
+    filledPerReasonTable.addDataHierarchy(
+      filledPerReasonTable.getHierarchy("Code")
+    );
 
-    // set char position
-    reasonChart.setLeft(850);
-    reasonChart.setTop(70);
+    directorPivotTable(hiringPlanTable);
   }
 
-  try {
-    createReasonChart();
-    createDirectorChart();
-  } catch (e) {
-    throw e;
-  } finally {
-    console.log(
-      "If you need support, email me at: ismael.moura@sinch.com or send a message in Microsoft Teams to: Ismael de Sousa Paulino Moura"
+  function directorPivotTable(hiringPlanTable: ExcelScript.Table) {
+    let directorTableName = "Filled-Per-Director";
+
+    if (pivotTablesSheet.getPivotTable(directorTableName)) {
+      pivotTablesSheet.getPivotTable(directorTableName).refresh();
+      return;
+    }
+
+    let filledPerDirectorTable = pivotTablesSheet.addPivotTable(
+      directorTableName,
+      hiringPlanTable,
+      pivotTablesSheet.getCell(0, 3)
+    );
+
+    filledPerDirectorTable.addFilterHierarchy(
+      filledPerDirectorTable.getHierarchy("Closing Date")
+    );
+
+    filledPerDirectorTable.addRowHierarchy(
+      filledPerDirectorTable.getHierarchy("Director")
+    );
+
+    filledPerDirectorTable.addDataHierarchy(
+      filledPerDirectorTable.getHierarchy("Code")
     );
   }
+
+  createJobTable();
+
+  console.log(
+    "If you need support, send an email to: ismael.moura@sinch.com or send a message in Microsoft Teams to: Ismael de Sousa Paulino Moura."
+  );
 }

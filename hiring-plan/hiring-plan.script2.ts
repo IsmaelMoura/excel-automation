@@ -1,9 +1,6 @@
 function main(workbook: ExcelScript.Workbook) {
-  const PIVOT_SHEET = workbook.getWorksheet("pivot");
-  const REASON_TABLE = PIVOT_SHEET.getTable("Reason_Table");
-  const DIRECTOR_TABLE = PIVOT_SHEET.getTable("Director_Table");
-  let today = new Date();
-  let monthName = [
+  const TODAY = new Date();
+  const MONTH_NAME = [
     "January",
     "February",
     "March",
@@ -18,21 +15,26 @@ function main(workbook: ExcelScript.Workbook) {
     "December",
   ];
 
+  let pivotSheet = workbook.getWorksheet("pivot");
+  let reasonTable = pivotSheet.getTable("Reason_Table");
+  let directorTable = pivotSheet.getTable("directorTable");
+
   function createReasonChart() {
-    let chartTitle = `Filled per Reason - ${monthName[today.getMonth() - 1]}`;
-    if (PIVOT_SHEET.getChart(chartTitle)) {
-      PIVOT_SHEET.getChart(chartTitle).delete();
+    let chartTitle = `Filled per Reason - ${MONTH_NAME[TODAY.getMonth() - 1]}`;
+
+    if (pivotSheet.getChart(chartTitle)) {
+      pivotSheet.getChart(chartTitle).delete();
     } else if (
-      REASON_TABLE.getRangeBetweenHeaderAndTotal().getUsedRange() === undefined
+      reasonTable.getRangeBetweenHeaderAndTotal().getUsedRange() === undefined
     ) {
       throw new Error(
-        "There is no data filled per reason table. Paste your informations and run the script again"
+        "There is no data in the table filled per reason. Paste your information and run the script again"
       );
     }
 
-    let reasonChart = PIVOT_SHEET.addChart(
+    let reasonChart = pivotSheet.addChart(
       ExcelScript.ChartType.columnClustered,
-      REASON_TABLE.getRangeBetweenHeaderAndTotal()
+      reasonTable.getRangeBetweenHeaderAndTotal()
     );
 
     reasonChart.setName(chartTitle);
@@ -50,23 +52,22 @@ function main(workbook: ExcelScript.Workbook) {
 
   function createDirectorChart() {
     let chartTitle: string = `Filled per Director - ${
-      monthName[today.getMonth() - 1]
+      MONTH_NAME[TODAY.getMonth() - 1]
     }`;
 
-    if (PIVOT_SHEET.getChart(chartTitle)) {
-      PIVOT_SHEET.getChart(chartTitle).delete();
+    if (pivotSheet.getChart(chartTitle)) {
+      pivotSheet.getChart(chartTitle).delete();
     } else if (
-      DIRECTOR_TABLE.getRangeBetweenHeaderAndTotal().getUsedRange() ===
-      undefined
+      directorTable.getRangeBetweenHeaderAndTotal().getUsedRange() === undefined
     ) {
       throw new Error(
-        "There is no data filled per director table. Paste your informations and run the script again"
+        "There is no data in the table filled per director. Paste your information and run the script again"
       );
     }
 
-    let reasonChart = PIVOT_SHEET.addChart(
+    let reasonChart = pivotSheet.addChart(
       ExcelScript.ChartType.columnClustered,
-      DIRECTOR_TABLE.getRangeBetweenHeaderAndTotal()
+      directorTable.getRangeBetweenHeaderAndTotal()
     );
 
     reasonChart.setName(chartTitle);
@@ -82,14 +83,10 @@ function main(workbook: ExcelScript.Workbook) {
     reasonChart.setTop(70);
   }
 
-  try {
-    createReasonChart();
-    createDirectorChart();
-  } catch (e) {
-    throw e;
-  } finally {
-    console.log(
-      "If you need support, email me at: ismael.moura@sinch.com or send a message in Microsoft Teams to: Ismael de Sousa Paulino Moura"
-    );
-  }
+  createReasonChart();
+  createDirectorChart();
+
+  console.log(
+    "If you need support, send an email to: ismael.moura@sinch.com or send a message in Microsoft Teams to: Ismael de Sousa Paulino Moura."
+  );
 }
