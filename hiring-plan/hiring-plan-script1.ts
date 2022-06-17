@@ -2,12 +2,13 @@ function main(workbook: ExcelScript.Workbook) {
   /**
    * Hiring Plan Report
    */
-  const hiringPlanReportSheet = workbook.getWorksheet(
+  const HIRING_PLAN_REPORT_TABLE_NAME = "hiring_plan_report";
+  let hiringPlanReportSheet = workbook.getWorksheet(
     "hiring_plan_report_2022-01-01_2"
   );
 
   function createJobTable() {
-    if (hiringPlanReportSheet.getTable("hiring_plan_report")) {
+    if (hiringPlanReportSheet.getTable(HIRING_PLAN_REPORT_TABLE_NAME)) {
       let clearSheet: void = hiringPlanReportSheet
         .getRanges()
         .clear(ExcelScript.ClearApplyTo.all);
@@ -34,7 +35,7 @@ function main(workbook: ExcelScript.Workbook) {
           .getExtendedRange(ExcelScript.KeyboardDirection.down),
         true
       )
-      .setName("hiring_plan_report");
+      .setName(HIRING_PLAN_REPORT_TABLE_NAME);
 
     createHiringManagerInfosTable();
   }
@@ -62,8 +63,9 @@ function main(workbook: ExcelScript.Workbook) {
         .setValue(text);
     });
 
-    let hiringPlanTable: ExcelScript.Table =
-      hiringPlanReportSheet.getTable("hiring_plan_report");
+    let hiringPlanTable: ExcelScript.Table = hiringPlanReportSheet.getTable(
+      HIRING_PLAN_REPORT_TABLE_NAME
+    );
 
     setFormula(hiringPlanTable);
   }
@@ -94,15 +96,15 @@ function main(workbook: ExcelScript.Workbook) {
   const pivotTablesSheet = workbook.getWorksheet("pivot");
 
   function createReasonTable(hiringPlanTable: ExcelScript.Table) {
-    let reasonPivotTableName = "Filled-Per-Reason";
+    const REASON_PIVOT_TABLE_NAME = "Filled-Per-Reason";
 
-    if (pivotTablesSheet.getPivotTable(reasonPivotTableName)) {
-      pivotTablesSheet.getPivotTable(reasonPivotTableName).refresh();
+    if (pivotTablesSheet.getPivotTable(REASON_PIVOT_TABLE_NAME)) {
+      pivotTablesSheet.getPivotTable(REASON_PIVOT_TABLE_NAME).refresh();
       return;
     }
 
     const filledPerReasonPivotTable = pivotTablesSheet.addPivotTable(
-      reasonPivotTableName,
+      REASON_PIVOT_TABLE_NAME,
       hiringPlanTable,
       pivotTablesSheet.getCell(0, 0)
     );
@@ -121,15 +123,15 @@ function main(workbook: ExcelScript.Workbook) {
   }
 
   function directorPivotTable(hiringPlanTable: ExcelScript.Table) {
-    let directorPivotTableName = "Filled-Per-Director";
+    const DIRECTOR_PIVOT_TABLE_NAME = "Filled-Per-Director";
 
-    if (pivotTablesSheet.getPivotTable(directorPivotTableName)) {
-      pivotTablesSheet.getPivotTable(directorPivotTableName).refresh();
+    if (pivotTablesSheet.getPivotTable(DIRECTOR_PIVOT_TABLE_NAME)) {
+      pivotTablesSheet.getPivotTable(DIRECTOR_PIVOT_TABLE_NAME).refresh();
       return;
     }
 
     let filledPerDirectorPivotTable = pivotTablesSheet.addPivotTable(
-      directorPivotTableName,
+      DIRECTOR_PIVOT_TABLE_NAME,
       hiringPlanTable,
       pivotTablesSheet.getCell(0, 3)
     );
