@@ -15,16 +15,31 @@ function main(workbook: ExcelScript.Workbook) {
     "December",
   ];
 
+  const REASON_TABLE_NAME = "reason_table";
+  const DIRECTOR_TABLE_NAME = "director_table";
   let pivotSheet = workbook.getWorksheet("pivot");
-  let reasonTable = pivotSheet.getTable("Reason_Table");
-  let directorTable = pivotSheet.getTable("directorTable");
+  let reasonTable = pivotSheet.getTable(REASON_TABLE_NAME);
+  let directorTable = pivotSheet.getTable(DIRECTOR_TABLE_NAME);
 
   function createReasonChart() {
     let chartTitle = `Filled per Reason - ${MONTH_NAME[TODAY.getMonth() - 1]}`;
 
+    if (!!reasonTable === false) {
+      let reasonTableHeaders = ["Reason", "Count Of Code"];
+
+      reasonTableHeaders.map((text, index) => {
+        pivotSheet.getCell(0, 6 + index).setValue(text);
+      });
+
+      reasonTable = pivotSheet.addTable("G1:H1", true);
+      reasonTable.setName(REASON_TABLE_NAME);
+    }
+
     if (pivotSheet.getChart(chartTitle)) {
       pivotSheet.getChart(chartTitle).delete();
-    } else if (
+    }
+
+    if (
       reasonTable.getRangeBetweenHeaderAndTotal().getUsedRange() === undefined
     ) {
       throw new Error(
@@ -55,9 +70,22 @@ function main(workbook: ExcelScript.Workbook) {
       MONTH_NAME[TODAY.getMonth() - 1]
     }`;
 
+    if (!!directorTable === false) {
+      let directorTableHeaders = ["Director", "Count Of Code"];
+
+      directorTableHeaders.map((text, index) => {
+        pivotSheet.getCell(0, 11 + index).setValue(text);
+      });
+
+      directorTable = pivotSheet.addTable("L1:M1", true);
+      directorTable.setName(DIRECTOR_TABLE_NAME);
+    }
+
     if (pivotSheet.getChart(chartTitle)) {
       pivotSheet.getChart(chartTitle).delete();
-    } else if (
+    }
+
+    if (
       directorTable.getRangeBetweenHeaderAndTotal().getUsedRange() === undefined
     ) {
       throw new Error(
@@ -73,9 +101,20 @@ function main(workbook: ExcelScript.Workbook) {
     directorChart.setName(chartTitle);
     directorChart.getTitle().setText(chartTitle);
     directorChart.getSeries()[0].setHasDataLabels(true);
-    directorChart.getAxes().getValueAxis().getMajorGridlines().setVisible(false);
-    directorChart.getAxes().getValueAxis().getMinorGridlines().setVisible(false);
+    directorChart
+      .getAxes()
+      .getValueAxis()
+      .getMajorGridlines()
+      .setVisible(false);
+
+    directorChart
+      .getAxes()
+      .getValueAxis()
+      .getMinorGridlines()
+      .setVisible(false);
+
     directorChart.getAxes().getValueAxis().setVisible(false);
+
     directorChart.getLegend().setVisible(false);
 
     // set char position
