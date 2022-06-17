@@ -1,7 +1,7 @@
 function main(workbook: ExcelScript.Workbook) {
   const SELECTED_WORKSHEET = workbook.getActiveWorksheet();
-  const today = new Date();
-  const monthName = [
+  const TODAY = new Date();
+  const MONTH_NAME = [
     "January",
     "February",
     "March",
@@ -48,8 +48,7 @@ function main(workbook: ExcelScript.Workbook) {
     let profileViews: ExcelScript.Range = SELECTED_WORKSHEET.getRange("K1:K2");
     let profileSaved: ExcelScript.Range = SELECTED_WORKSHEET.getRange("N1:N2");
     let messagesSent: ExcelScript.Range = SELECTED_WORKSHEET.getRange("R1:R2");
-    let messagesAccepted: ExcelScript.Range =
-      SELECTED_WORKSHEET.getRange("S1:S2");
+    let messagesAccepted: ExcelScript.Range = SELECTED_WORKSHEET.getRange("S1:S2");
 
     // insert infornations in the cells
     SELECTED_WORKSHEET.getRange("A5").copyFrom(
@@ -79,12 +78,12 @@ function main(workbook: ExcelScript.Workbook) {
   }
 
   function createChart() {
-    let chartTitle: string = `LinkedIn source - ${
-      monthName[today.getMonth() - 1]
+    const CHART_TITLE: string = `LinkedIn source - ${
+      MONTH_NAME[TODAY.getMonth() - 1]
     }`;
 
-    if (SELECTED_WORKSHEET.getChart(chartTitle)) {
-      SELECTED_WORKSHEET.getChart(chartTitle).delete();
+    if (SELECTED_WORKSHEET.getChart(CHART_TITLE)) {
+      SELECTED_WORKSHEET.getChart(CHART_TITLE).delete();
     }
 
     let chart = SELECTED_WORKSHEET.addChart(
@@ -92,8 +91,8 @@ function main(workbook: ExcelScript.Workbook) {
       SELECTED_WORKSHEET.getRange("A5:D6")
     );
 
-    chart.setName(chartTitle);
-    chart.getTitle().setText(chartTitle);
+    chart.setName(CHART_TITLE);
+    chart.getTitle().setText(CHART_TITLE);
     chart.getSeries()[0].setHasDataLabels(true);
 
     // set chart position
@@ -101,15 +100,11 @@ function main(workbook: ExcelScript.Workbook) {
     chart.setTop(100);
   }
 
-  try {
-    splitInformations();
-    copyInformations();
-    createChart();
-  } catch (err) {
-    throw err;
-  } finally {
-    console.log(
-      "If you need support, email me at: ismael.moura@sinch.com or send a message in Microsoft Teams to: Ismael de Sousa Paulino Moura"
-    );
-  }
+  splitInformations();
+  copyInformations();
+  createChart();
+
+  console.log(
+    "If you need support, email me at: ismael.moura@sinch.com or send a message in Microsoft Teams to: Ismael de Sousa Paulino Moura"
+  );
 }
