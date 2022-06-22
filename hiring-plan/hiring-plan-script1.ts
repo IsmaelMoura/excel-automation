@@ -19,7 +19,7 @@ function main(workbook: ExcelScript.Workbook) {
         .getRanges()
         .clear(ExcelScript.ClearApplyTo.all);
 
-      throw new Error(
+      throw new RangeError(
         "There is no data in the spreadsheet. Paste your informations and run the script again"
       );
     }
