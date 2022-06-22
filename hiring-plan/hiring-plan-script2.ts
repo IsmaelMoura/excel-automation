@@ -22,18 +22,9 @@ function main(workbook: ExcelScript.Workbook) {
   let directorTable = pivotSheet.getTable(DIRECTOR_TABLE_NAME);
 
   function createReasonChart() {
-    const CHART_TITLE = `Filled per Reason - ${MONTH_NAME[TODAY.getMonth() - 1]}`;
-
-    if (!!reasonTable === false) {
-      let reasonTableHeaders = ["Reason", "Count Of Code"];
-
-      reasonTableHeaders.map((text, index) => {
-        pivotSheet.getCell(0, 6 + index).setValue(text);
-      });
-
-      reasonTable = pivotSheet.addTable("G1:H1", true);
-      reasonTable.setName(REASON_TABLE_NAME);
-    }
+    const CHART_TITLE = `Filled per Reason - ${
+      MONTH_NAME[TODAY.getMonth() - 1]
+    }`;
 
     if (pivotSheet.getChart(CHART_TITLE)) {
       pivotSheet.getChart(CHART_TITLE).delete();
@@ -69,17 +60,6 @@ function main(workbook: ExcelScript.Workbook) {
     const CHART_TITLE: string = `Filled per Director - ${
       MONTH_NAME[TODAY.getMonth() - 1]
     }`;
-
-    if (!!directorTable === false) {
-      let directorTableHeaders = ["Director", "Count Of Code"];
-
-      directorTableHeaders.map((text, index) => {
-        pivotSheet.getCell(0, 11 + index).setValue(text);
-      });
-
-      directorTable = pivotSheet.addTable("L1:M1", true);
-      directorTable.setName(DIRECTOR_TABLE_NAME);
-    }
 
     if (pivotSheet.getChart(CHART_TITLE)) {
       pivotSheet.getChart(CHART_TITLE).delete();
@@ -120,6 +100,36 @@ function main(workbook: ExcelScript.Workbook) {
     // set char position
     directorChart.setLeft(850);
     directorChart.setTop(70);
+  }
+
+  function createReasonTable() {
+    let reasonTableHeaders = ["Reason", "Count Of Code"];
+
+    reasonTableHeaders.map((text, index) => {
+      pivotSheet.getCell(0, 6 + index).setValue(text);
+    });
+
+    reasonTable = pivotSheet.addTable("G1:H1", true);
+    reasonTable.setName(REASON_TABLE_NAME);
+  }
+
+  function createDirectorTable() {
+    let directorTableHeaders = ["Director", "Count Of Code"];
+
+    directorTableHeaders.map((text, index) => {
+      pivotSheet.getCell(0, 11 + index).setValue(text);
+    });
+
+    directorTable = pivotSheet.addTable("L1:M1", true);
+    directorTable.setName(DIRECTOR_TABLE_NAME);
+  }
+
+  if (!!reasonTable === false) {
+    createReasonTable();
+  }
+
+  if (!!directorTable === false) {
+    createDirectorTable();
   }
 
   createReasonChart();
