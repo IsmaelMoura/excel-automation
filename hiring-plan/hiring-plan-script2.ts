@@ -26,13 +26,15 @@ function main(workbook: ExcelScript.Workbook) {
       MONTH_NAME[TODAY.getMonth() - 1]
     }`;
 
+    const REASON_TABLE_VALUES = reasonTable
+      .getRangeBetweenHeaderAndTotal()
+      .getUsedRange();
+
     if (pivotSheet.getChart(CHART_TITLE)) {
       pivotSheet.getChart(CHART_TITLE).delete();
     }
 
-    if (
-      reasonTable.getRangeBetweenHeaderAndTotal().getUsedRange() === undefined
-    ) {
+    if (REASON_TABLE_VALUES === undefined) {
       throw new Error(
         "There is no data in the table filled per reason. Paste your information and run the script again"
       );
@@ -61,13 +63,15 @@ function main(workbook: ExcelScript.Workbook) {
       MONTH_NAME[TODAY.getMonth() - 1]
     }`;
 
+    const DIRECTOR_TABLE_VALUES = directorTable
+      .getRangeBetweenHeaderAndTotal()
+      .getUsedRange();
+
     if (pivotSheet.getChart(CHART_TITLE)) {
       pivotSheet.getChart(CHART_TITLE).delete();
     }
 
-    if (
-      directorTable.getRangeBetweenHeaderAndTotal().getUsedRange() === undefined
-    ) {
+    if (DIRECTOR_TABLE_VALUES === undefined) {
       throw new Error(
         "There is no data in the table filled per director. Paste your information and run the script again"
       );
