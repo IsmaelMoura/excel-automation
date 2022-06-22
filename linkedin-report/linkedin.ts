@@ -21,7 +21,7 @@ function main(workbook: ExcelScript.Workbook) {
       let clearSheet: void = SELECTED_WORKSHEET.getRanges().clear(
         ExcelScript.ClearApplyTo.all
       );
-      throw new Error(
+      throw new RangeError(
         "There is no data in the spreadsheet. Paste your informations and run the script again"
       );
     }
@@ -29,11 +29,11 @@ function main(workbook: ExcelScript.Workbook) {
     let header = SELECTED_WORKSHEET.getRange("A1")
       .getValues()
       .toString()
-      .split(/[,]/);
+      .split(",");
     let infos = SELECTED_WORKSHEET.getRange("A2")
       .getValues()
       .toString()
-      .split(/[,]/);
+      .split(",");
 
     header.map((text, index) => {
       SELECTED_WORKSHEET.getCell(0, index).setValue(text);
@@ -48,7 +48,8 @@ function main(workbook: ExcelScript.Workbook) {
     let profileViews: ExcelScript.Range = SELECTED_WORKSHEET.getRange("K1:K2");
     let profileSaved: ExcelScript.Range = SELECTED_WORKSHEET.getRange("N1:N2");
     let messagesSent: ExcelScript.Range = SELECTED_WORKSHEET.getRange("R1:R2");
-    let messagesAccepted: ExcelScript.Range = SELECTED_WORKSHEET.getRange("S1:S2");
+    let messagesAccepted: ExcelScript.Range =
+      SELECTED_WORKSHEET.getRange("S1:S2");
 
     // insert infornations in the cells
     SELECTED_WORKSHEET.getRange("A5").copyFrom(
@@ -100,7 +101,10 @@ function main(workbook: ExcelScript.Workbook) {
     chart.setTop(100);
   }
 
-  splitInformations();
+  if (SELECTED_WORKSHEET.getRange("A1").getValue().toString().includes(",")) {
+    splitInformations();
+  }
+
   copyInformations();
   createChart();
 
