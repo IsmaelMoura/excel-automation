@@ -35,7 +35,7 @@ function main(workbook: ExcelScript.Workbook) {
     }
 
     if (REASON_TABLE_VALUES === undefined) {
-      throw new Error(
+      throw new RangeError(
         "There is no data in the table filled per reason. Paste your information and run the script again"
       );
     }
@@ -72,7 +72,7 @@ function main(workbook: ExcelScript.Workbook) {
     }
 
     if (DIRECTOR_TABLE_VALUES === undefined) {
-      throw new Error(
+      throw new RangeError(
         "There is no data in the table filled per director. Paste your information and run the script again"
       );
     }
@@ -107,9 +107,9 @@ function main(workbook: ExcelScript.Workbook) {
   }
 
   function createReasonTable() {
-    let reasonTableHeaders = ["Reason", "Count Of Code"];
+    let REASON_TABLE_HEADERS = ["Reason", "Count Of Code"];
 
-    reasonTableHeaders.map((text, index) => {
+    REASON_TABLE_HEADERS.map((text, index) => {
       pivotSheet.getCell(0, 6 + index).setValue(text);
     });
 
@@ -118,9 +118,9 @@ function main(workbook: ExcelScript.Workbook) {
   }
 
   function createDirectorTable() {
-    let directorTableHeaders = ["Director", "Count Of Code"];
+    const DIRECTOR_TABLE_HEADERS = ["Director", "Count Of Code"];
 
-    directorTableHeaders.map((text, index) => {
+    DIRECTOR_TABLE_HEADERS.map((text, index) => {
       pivotSheet.getCell(0, 11 + index).setValue(text);
     });
 
