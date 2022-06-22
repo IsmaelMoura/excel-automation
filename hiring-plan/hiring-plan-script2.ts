@@ -22,7 +22,7 @@ function main(workbook: ExcelScript.Workbook) {
   let directorTable = pivotSheet.getTable(DIRECTOR_TABLE_NAME);
 
   function createReasonChart() {
-    let chartTitle = `Filled per Reason - ${MONTH_NAME[TODAY.getMonth() - 1]}`;
+    const CHART_TITLE = `Filled per Reason - ${MONTH_NAME[TODAY.getMonth() - 1]}`;
 
     if (!!reasonTable === false) {
       let reasonTableHeaders = ["Reason", "Count Of Code"];
@@ -35,8 +35,8 @@ function main(workbook: ExcelScript.Workbook) {
       reasonTable.setName(REASON_TABLE_NAME);
     }
 
-    if (pivotSheet.getChart(chartTitle)) {
-      pivotSheet.getChart(chartTitle).delete();
+    if (pivotSheet.getChart(CHART_TITLE)) {
+      pivotSheet.getChart(CHART_TITLE).delete();
     }
 
     if (
@@ -52,8 +52,8 @@ function main(workbook: ExcelScript.Workbook) {
       reasonTable.getRangeBetweenHeaderAndTotal()
     );
 
-    reasonChart.setName(chartTitle);
-    reasonChart.getTitle().setText(chartTitle);
+    reasonChart.setName(CHART_TITLE);
+    reasonChart.getTitle().setText(CHART_TITLE);
     reasonChart.getSeries()[0].setHasDataLabels(true);
     reasonChart.getAxes().getValueAxis().getMajorGridlines().setVisible(false);
     reasonChart.getAxes().getValueAxis().getMinorGridlines().setVisible(false);
@@ -66,7 +66,7 @@ function main(workbook: ExcelScript.Workbook) {
   }
 
   function createDirectorChart() {
-    let chartTitle: string = `Filled per Director - ${
+    const CHART_TITLE: string = `Filled per Director - ${
       MONTH_NAME[TODAY.getMonth() - 1]
     }`;
 
@@ -81,8 +81,8 @@ function main(workbook: ExcelScript.Workbook) {
       directorTable.setName(DIRECTOR_TABLE_NAME);
     }
 
-    if (pivotSheet.getChart(chartTitle)) {
-      pivotSheet.getChart(chartTitle).delete();
+    if (pivotSheet.getChart(CHART_TITLE)) {
+      pivotSheet.getChart(CHART_TITLE).delete();
     }
 
     if (
@@ -98,8 +98,8 @@ function main(workbook: ExcelScript.Workbook) {
       directorTable.getRangeBetweenHeaderAndTotal()
     );
 
-    directorChart.setName(chartTitle);
-    directorChart.getTitle().setText(chartTitle);
+    directorChart.setName(CHART_TITLE);
+    directorChart.getTitle().setText(CHART_TITLE);
     directorChart.getSeries()[0].setHasDataLabels(true);
     directorChart
       .getAxes()
