@@ -3,9 +3,7 @@ function main(workbook: ExcelScript.Workbook) {
    * Hiring Plan Report
    */
   const HIRING_PLAN_REPORT_TABLE_NAME = "hiring_plan_report";
-  let hiringPlanReportSheet = workbook.getWorksheet(
-    "hiring_plan_report_2022-01-01_2"
-  );
+  let hiringPlanReportSheet = workbook.getWorksheet("hiring-plan-report");
 
   function createJobTable() {
     if (hiringPlanReportSheet.getTable(HIRING_PLAN_REPORT_TABLE_NAME)) {
