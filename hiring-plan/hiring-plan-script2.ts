@@ -17,9 +17,9 @@ function main(workbook: ExcelScript.Workbook) {
 
   const REASON_TABLE_NAME = "reason_table";
   const DIRECTOR_TABLE_NAME = "director_table";
-  let pivotSheet = workbook.getWorksheet("pivot");
-  let reasonTable = pivotSheet.getTable(REASON_TABLE_NAME);
-  let directorTable = pivotSheet.getTable(DIRECTOR_TABLE_NAME);
+  const PIVOT_TABLES_SHEET = workbook.getWorksheet("pivot");
+  let reasonTable = PIVOT_TABLES_SHEET.getTable(REASON_TABLE_NAME);
+  let directorTable = PIVOT_TABLES_SHEET.getTable(DIRECTOR_TABLE_NAME);
 
   function createReasonChart() {
     const CHART_TITLE = `Filled per Reason - ${
@@ -30,8 +30,8 @@ function main(workbook: ExcelScript.Workbook) {
       .getRangeBetweenHeaderAndTotal()
       .getUsedRange();
 
-    if (pivotSheet.getChart(CHART_TITLE)) {
-      pivotSheet.getChart(CHART_TITLE).delete();
+    if (PIVOT_TABLES_SHEET.getChart(CHART_TITLE)) {
+      PIVOT_TABLES_SHEET.getChart(CHART_TITLE).delete();
     }
 
     if (REASON_TABLE_VALUES === undefined) {
@@ -40,7 +40,7 @@ function main(workbook: ExcelScript.Workbook) {
       );
     }
 
-    let reasonChart = pivotSheet.addChart(
+    let reasonChart = PIVOT_TABLES_SHEET.addChart(
       ExcelScript.ChartType.columnClustered,
       reasonTable.getRangeBetweenHeaderAndTotal()
     );
@@ -67,8 +67,8 @@ function main(workbook: ExcelScript.Workbook) {
       .getRangeBetweenHeaderAndTotal()
       .getUsedRange();
 
-    if (pivotSheet.getChart(CHART_TITLE)) {
-      pivotSheet.getChart(CHART_TITLE).delete();
+    if (PIVOT_TABLES_SHEET.getChart(CHART_TITLE)) {
+      PIVOT_TABLES_SHEET.getChart(CHART_TITLE).delete();
     }
 
     if (DIRECTOR_TABLE_VALUES === undefined) {
@@ -77,7 +77,7 @@ function main(workbook: ExcelScript.Workbook) {
       );
     }
 
-    let directorChart = pivotSheet.addChart(
+    let directorChart = PIVOT_TABLES_SHEET.addChart(
       ExcelScript.ChartType.columnClustered,
       directorTable.getRangeBetweenHeaderAndTotal()
     );
@@ -107,13 +107,13 @@ function main(workbook: ExcelScript.Workbook) {
   }
 
   function createReasonTable() {
-    let REASON_TABLE_HEADERS = ["Reason", "Count Of Code"];
+    const REASON_TABLE_HEADERS = ["Reason", "Count Of Code"];
 
     REASON_TABLE_HEADERS.map((text, index) => {
-      pivotSheet.getCell(0, 6 + index).setValue(text);
+      PIVOT_TABLES_SHEET.getCell(0, 6 + index).setValue(text);
     });
 
-    reasonTable = pivotSheet.addTable("G1:H1", true);
+    reasonTable = PIVOT_TABLES_SHEET.addTable("G1:H1", true);
     reasonTable.setName(REASON_TABLE_NAME);
   }
 
@@ -121,10 +121,10 @@ function main(workbook: ExcelScript.Workbook) {
     const DIRECTOR_TABLE_HEADERS = ["Director", "Count Of Code"];
 
     DIRECTOR_TABLE_HEADERS.map((text, index) => {
-      pivotSheet.getCell(0, 11 + index).setValue(text);
+      PIVOT_TABLES_SHEET.getCell(0, 11 + index).setValue(text);
     });
 
-    directorTable = pivotSheet.addTable("L1:M1", true);
+    directorTable = PIVOT_TABLES_SHEET.addTable("L1:M1", true);
     directorTable.setName(DIRECTOR_TABLE_NAME);
   }
 

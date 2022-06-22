@@ -3,43 +3,41 @@ function main(workbook: ExcelScript.Workbook) {
    * Hiring Plan Report
    */
   const HIRING_PLAN_REPORT_TABLE_NAME = "hiring_plan_report";
-  let hiringPlanReportSheet = workbook.getWorksheet("hiring-plan-report");
+  const HIRING_PLAN_REPORT_SHEET = workbook.getWorksheet("hiring-plan-report");
 
   function createJobTable() {
-    if (hiringPlanReportSheet.getTable(HIRING_PLAN_REPORT_TABLE_NAME)) {
-      let clearSheet: void = hiringPlanReportSheet
-        .getRanges()
-        .clear(ExcelScript.ClearApplyTo.all);
+    if (HIRING_PLAN_REPORT_SHEET.getTable(HIRING_PLAN_REPORT_TABLE_NAME)) {
+      let clearSheet: void = HIRING_PLAN_REPORT_SHEET.getRanges().clear(
+        ExcelScript.ClearApplyTo.all
+      );
 
       throw new Error(
         "A table already exists. Paste your informations, and run the script again"
       );
-    } else if (hiringPlanReportSheet.getCell(0, 0).getValue() !== "Code") {
-      let clearSheet: void = hiringPlanReportSheet
-        .getRanges()
-        .clear(ExcelScript.ClearApplyTo.all);
+    } else if (HIRING_PLAN_REPORT_SHEET.getCell(0, 0).getValue() !== "Code") {
+      let clearSheet: void = HIRING_PLAN_REPORT_SHEET.getRanges().clear(
+        ExcelScript.ClearApplyTo.all
+      );
 
       throw new RangeError(
         "There is no data in the spreadsheet. Paste your informations and run the script again"
       );
     }
 
-    hiringPlanReportSheet.getAutoFilter().remove();
+    HIRING_PLAN_REPORT_SHEET.getAutoFilter().remove();
 
-    hiringPlanReportSheet
-      .addTable(
-        hiringPlanReportSheet
-          .getRange("A1:Z1")
-          .getExtendedRange(ExcelScript.KeyboardDirection.down),
-        true
-      )
-      .setName(HIRING_PLAN_REPORT_TABLE_NAME);
+    HIRING_PLAN_REPORT_SHEET.addTable(
+      HIRING_PLAN_REPORT_SHEET.getRange("A1:Z1").getExtendedRange(
+        ExcelScript.KeyboardDirection.down
+      ),
+      true
+    ).setName(HIRING_PLAN_REPORT_TABLE_NAME);
 
     createHiringManagerInfosTable();
   }
 
   function createHiringManagerInfosTable() {
-    let hiringManagerTableHeaders = [
+    const HIRING_MANAGER_TABLE_HEADERS = [
       "BU",
       "Director",
       "Opened Date",
@@ -50,25 +48,24 @@ function main(workbook: ExcelScript.Workbook) {
       "Region",
     ];
 
-    let sheetRowLength = hiringPlanReportSheet
-      .getUsedRange()
+    let sheetRowLength = HIRING_PLAN_REPORT_SHEET.getUsedRange()
       .getLastColumn()
       .getColumnIndex();
 
-    hiringManagerTableHeaders.map((text, index) => {
-      hiringPlanReportSheet
-        .getCell(0, sheetRowLength + index + 1)
-        .setValue(text);
+    HIRING_MANAGER_TABLE_HEADERS.map((text, index) => {
+      HIRING_PLAN_REPORT_SHEET.getCell(0, sheetRowLength + index + 1).setValue(
+        text
+      );
     });
 
-    let hiringPlanTable: ExcelScript.Table = hiringPlanReportSheet.getTable(
+    let hiringPlanTable: ExcelScript.Table = HIRING_PLAN_REPORT_SHEET.getTable(
       HIRING_PLAN_REPORT_TABLE_NAME
     );
 
-    setFormula(hiringPlanTable);
+    setFormulas(hiringPlanTable);
   }
 
-  function setFormula(hiringPlanTable: ExcelScript.Table) {
+  function setFormulas(hiringPlanTable: ExcelScript.Table) {
     let buColumn = hiringPlanTable
       .getColumnByName("BU")
       .getRangeBetweenHeaderAndTotal();
@@ -85,26 +82,26 @@ function main(workbook: ExcelScript.Workbook) {
     directorColumn.setFormulaLocal("=VLOOKUP(K2;'To. For'!A:C;3;0)");
     openedDateColumn.setFormulaLocal("=LEFT(S2;7)");
 
-    createReasonTable(hiringPlanTable);
+    createReasonPivotTable(hiringPlanTable);
   }
 
   /**
-   * PivotTables
+   * Pivot Tables
    */
-  const pivotTablesSheet = workbook.getWorksheet("pivot");
+  const PIVOT_TABLES_SHEET = workbook.getWorksheet("pivot");
 
-  function createReasonTable(hiringPlanTable: ExcelScript.Table) {
+  function createReasonPivotTable(hiringPlanTable: ExcelScript.Table) {
     const REASON_PIVOT_TABLE_NAME = "Filled-Per-Reason";
 
-    if (pivotTablesSheet.getPivotTable(REASON_PIVOT_TABLE_NAME)) {
-      pivotTablesSheet.getPivotTable(REASON_PIVOT_TABLE_NAME).refresh();
+    if (PIVOT_TABLES_SHEET.getPivotTable(REASON_PIVOT_TABLE_NAME)) {
+      PIVOT_TABLES_SHEET.getPivotTable(REASON_PIVOT_TABLE_NAME).refresh();
       return;
     }
 
-    const filledPerReasonPivotTable = pivotTablesSheet.addPivotTable(
+    const filledPerReasonPivotTable = PIVOT_TABLES_SHEET.addPivotTable(
       REASON_PIVOT_TABLE_NAME,
       hiringPlanTable,
-      pivotTablesSheet.getCell(0, 0)
+      PIVOT_TABLES_SHEET.getCell(0, 0)
     );
 
     filledPerReasonPivotTable.addFilterHierarchy(
@@ -117,21 +114,21 @@ function main(workbook: ExcelScript.Workbook) {
       filledPerReasonPivotTable.getHierarchy("Code")
     );
 
-    directorPivotTable(hiringPlanTable);
+    createDirectorPivotTable(hiringPlanTable);
   }
 
-  function directorPivotTable(hiringPlanTable: ExcelScript.Table) {
+  function createDirectorPivotTable(hiringPlanTable: ExcelScript.Table) {
     const DIRECTOR_PIVOT_TABLE_NAME = "Filled-Per-Director";
 
-    if (pivotTablesSheet.getPivotTable(DIRECTOR_PIVOT_TABLE_NAME)) {
-      pivotTablesSheet.getPivotTable(DIRECTOR_PIVOT_TABLE_NAME).refresh();
+    if (PIVOT_TABLES_SHEET.getPivotTable(DIRECTOR_PIVOT_TABLE_NAME)) {
+      PIVOT_TABLES_SHEET.getPivotTable(DIRECTOR_PIVOT_TABLE_NAME).refresh();
       return;
     }
 
-    let filledPerDirectorPivotTable = pivotTablesSheet.addPivotTable(
+    let filledPerDirectorPivotTable = PIVOT_TABLES_SHEET.addPivotTable(
       DIRECTOR_PIVOT_TABLE_NAME,
       hiringPlanTable,
-      pivotTablesSheet.getCell(0, 3)
+      PIVOT_TABLES_SHEET.getCell(0, 3)
     );
 
     filledPerDirectorPivotTable.addFilterHierarchy(
