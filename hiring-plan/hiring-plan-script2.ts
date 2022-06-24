@@ -15,16 +15,16 @@ function main(workbook: ExcelScript.Workbook) {
     "December",
   ];
 
+  const PIVOT_TABLES_SHEET = workbook.getWorksheet("pivot");
   const REASON_TABLE_NAME = "reason_table";
   const DIRECTOR_TABLE_NAME = "director_table";
-  const PIVOT_TABLES_SHEET = workbook.getWorksheet("pivot");
   let reasonTable = PIVOT_TABLES_SHEET.getTable(REASON_TABLE_NAME);
   let directorTable = PIVOT_TABLES_SHEET.getTable(DIRECTOR_TABLE_NAME);
 
   function createReasonChart() {
     const CHART_TITLE = `Filled per Reason - ${
       MONTH_NAME[TODAY.getMonth() - 1]
-    }`;
+      }`;
 
     const REASON_TABLE_VALUES = reasonTable
       .getRangeBetweenHeaderAndTotal()
@@ -42,7 +42,7 @@ function main(workbook: ExcelScript.Workbook) {
 
     let reasonChart = PIVOT_TABLES_SHEET.addChart(
       ExcelScript.ChartType.columnClustered,
-      reasonTable.getRangeBetweenHeaderAndTotal()
+      REASON_TABLE_VALUES
     );
 
     reasonChart.setName(CHART_TITLE);
@@ -61,7 +61,7 @@ function main(workbook: ExcelScript.Workbook) {
   function createDirectorChart() {
     const CHART_TITLE: string = `Filled per Director - ${
       MONTH_NAME[TODAY.getMonth() - 1]
-    }`;
+      }`;
 
     const DIRECTOR_TABLE_VALUES = directorTable
       .getRangeBetweenHeaderAndTotal()
@@ -79,7 +79,7 @@ function main(workbook: ExcelScript.Workbook) {
 
     let directorChart = PIVOT_TABLES_SHEET.addChart(
       ExcelScript.ChartType.columnClustered,
-      directorTable.getRangeBetweenHeaderAndTotal()
+      DIRECTOR_TABLE_VALUES
     );
 
     directorChart.setName(CHART_TITLE);
@@ -110,7 +110,7 @@ function main(workbook: ExcelScript.Workbook) {
     const REASON_TABLE_HEADERS = ["Reason", "Count Of Code"];
 
     REASON_TABLE_HEADERS.map((text, index) => {
-      PIVOT_TABLES_SHEET.getCell(0, 6 + index).setValue(text);
+      PIVOT_TABLES_SHEET.getCell(0, 6 + index).setValue(text); // Row 1, start column G
     });
 
     reasonTable = PIVOT_TABLES_SHEET.addTable("G1:H1", true);
@@ -121,7 +121,7 @@ function main(workbook: ExcelScript.Workbook) {
     const DIRECTOR_TABLE_HEADERS = ["Director", "Count Of Code"];
 
     DIRECTOR_TABLE_HEADERS.map((text, index) => {
-      PIVOT_TABLES_SHEET.getCell(0, 11 + index).setValue(text);
+      PIVOT_TABLES_SHEET.getCell(0, 11 + index).setValue(text); // Row 1, start column L
     });
 
     directorTable = PIVOT_TABLES_SHEET.addTable("L1:M1", true);
