@@ -5,9 +5,9 @@ function main(workbook: ExcelScript.Workbook) {
   const HIRING_PLAN_REPORT_TABLE_NAME = "hiring_plan_report";
   const HIRING_PLAN_REPORT_SHEET = workbook.getWorksheet("hiring-plan-report");
 
-  HIRING_PLAN_REPORT_SHEET.getRange().getFormat().getFill().clear();
-
   function createJobTable() {
+    HIRING_PLAN_REPORT_SHEET.getRange().getFormat().getFill().clear();
+
     if (HIRING_PLAN_REPORT_SHEET.getTable(HIRING_PLAN_REPORT_TABLE_NAME)) {
       let clearSheet: void = HIRING_PLAN_REPORT_SHEET.getRanges().clear(
         ExcelScript.ClearApplyTo.all
