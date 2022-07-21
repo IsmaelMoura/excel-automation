@@ -82,7 +82,7 @@ function main(workbook: ExcelScript.Workbook) {
 
     buColumn.setFormulaLocal("=VLOOKUP(K2;'To. For'!A:B;2;0)");
     directorColumn.setFormulaLocal("=VLOOKUP(K2;'To. For'!A:C;3;0)");
-    openedDateColumn.setFormulaLocal("=LEFT(S2;7)");
+    openedDateColumn.setFormulaLocal('=IF(S2="";"";TEXT(S2;"yyyy-mm"))');
 
     createReasonPivotTable(hiringPlanTable);
   }
